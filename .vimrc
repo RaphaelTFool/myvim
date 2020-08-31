@@ -38,6 +38,10 @@ set background=dark
 colorscheme onedark
 let g:airline_theme='onedark'
 let g:lightline = { 'colorscheme': 'onedark' }
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline#extensions#tabline#formatter = 'default'
 set number
 set laststatus=2
 
@@ -103,6 +107,7 @@ if exists('*minpac#init')
   call minpac#add('junegunn/fzf', {'do': {-> fzf#install()}})
   call minpac#add('junegunn/fzf.vim')
   " 主题
+  call minpac#add('vim-airline/vim-airline')
   call minpac#add('vim-airline/vim-airline-themes')
 endif
 
