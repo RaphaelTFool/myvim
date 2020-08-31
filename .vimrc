@@ -2,6 +2,9 @@ set enc=utf-8
 set nocompatible
 source $VIMRUNTIME/vimrc_example.vim
 
+" 断行设置
+au FileType changelog  setlocal textwidth=76
+
 " 透明化
 if !has('gui_running')
   func! s:transparent_background()
@@ -12,7 +15,18 @@ if !has('gui_running')
 endif
 
 " 设置主题
-set guifont=DejaVu\ Sans\ Mono\ 14
+" 设置等宽字体
+if has('gui_running')
+  set guifont=DejaVu\ Sans\ Mono\ 16
+endif
+" 检测并设置真彩色
+if has('termguicolors') &&
+      \($COLORTERM == 'truecolor' || $COLORTERM == '24bit')
+  set termguicolors
+endif
+" 检查配色详情
+nnoremap <Leader>a :call SyntaxAttr()<CR>
+" 设置papercolor主题属性
 let g:PaperColor_Theme_Options = {
   \   'theme': {
   \     'default.dark': {
@@ -32,12 +46,12 @@ let g:PaperColor_Theme_Options = {
   \   }
   \ }
 set background=dark
-"colorscheme PaperColor
-"let g:airline_theme='papercolor'
-"let g:lightline = { 'colorscheme': 'PaperColor' }
-colorscheme onedark
-let g:airline_theme='onedark'
-let g:lightline = { 'colorscheme': 'onedark' }
+colorscheme PaperColor
+let g:airline_theme='papercolor'
+let g:lightline = { 'colorscheme': 'PaperColor' }
+"colorscheme onedark
+"let g:airline_theme='onedark'
+"let g:lightline = { 'colorscheme': 'onedark' }
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
@@ -109,6 +123,7 @@ if exists('*minpac#init')
   " 主题
   call minpac#add('vim-airline/vim-airline')
   call minpac#add('vim-airline/vim-airline-themes')
+  call minpac#add('vim-scripts/SyntaxAttr.vim')
 endif
 
 if has('eval')
