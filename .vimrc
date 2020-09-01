@@ -120,6 +120,8 @@ if exists('*minpac#init')
   call minpac#add('tpope/vim-eunuch')
   call minpac#add('junegunn/fzf', {'do': {-> fzf#install()}})
   call minpac#add('junegunn/fzf.vim')
+  call minpac#add('adah1972/ycmconf')
+  call minpac#add('lyuts/vim-rtags')
   " 主题
   call minpac#add('vim-airline/vim-airline')
   call minpac#add('vim-airline/vim-airline-themes')
@@ -210,3 +212,33 @@ nnoremap <F5>  :if g:asyncrun_status != 'running'<bar>
 " ========== 启用 man 插件 ==========
 source $VIMRUNTIME/ftplugin/man.vim
 set keywordprg=:Man
+
+" YouCompleteMe自动补全配置
+let g:ycm_use_clangd = 1    " 是否使用最新clangd引擎
+nnoremap <Leader>fi :YcmCompleter FixIt<CR>
+nnoremap <Leader>gt :YcmCompleter GoTo<CR>
+nnoremap <Leader>gd :YcmCompleter GoToDefinition<CR>
+nnoremap <Leader>gh :YcmCompleter GoToDeclaration<CR>
+nnoremap <Leader>gr :YcmCompleter GoToReferences<CR>
+
+" 禁用光标长期停留的自动文档提示
+let g:ycm_auto_hover = ''
+" 注释中的自动完成
+let g:ycm_complete_in_comments = 1
+" YCM白名单
+let g:ycm_filetype_whitelist = {
+      \ 'c': 1,
+      \ 'cpp': 1,
+      \ 'python': 1,
+      \ 'go': 1,
+      \ 'vim': 1,
+      \ 'sh': 1,
+      \ 'zsh': 1,
+      \ }
+" 跳转文件如果没打开则用分割窗口打开
+let g:ycm_goto_buffer_command = 'split-or-existing-window'
+" 手动启用予以完成的快捷键
+let g:ycm_key_invoke_completion = '<C-Z>'
+" rtags配置
+let g:rtagsUseLocationList = 0
+
