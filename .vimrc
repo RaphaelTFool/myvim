@@ -149,6 +149,9 @@ if exists('*minpac#init')
   " C编程支持
   call minpac#add('mbbill/echofunc')
   call minpac#add('adah1972/cscope_maps.vim')
+  " python编程支持
+  call minpac#add('python-mode/python-mode')
+  call minpac#add('dense-analysis/ale')
 endif
 
 if has('eval')
@@ -236,6 +239,7 @@ nnoremap <F5>  :if g:asyncrun_status != 'running'<bar>
 source $VIMRUNTIME/ftplugin/man.vim
 set keywordprg=:Man
 
+" ========== YouCompleteMe ==========
 " YouCompleteMe自动补全配置
 let g:ycm_use_clangd = 1    " 是否使用最新clangd引擎
 nnoremap <Leader>fi :YcmCompleter FixIt<CR>
@@ -265,6 +269,7 @@ let g:ycm_key_invoke_completion = '<C-Z>'
 " rtags配置
 let g:rtagsUseLocationList = 0
 
+" ========== C Language ==========
 " C语言语法高亮精调
 let g:c_space_errors = 1        " 标记空格错误
 let g:c_gnu = 1                 " 激活gnu扩展
@@ -307,3 +312,66 @@ set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
 
 " clangformat代码格式化
 noremap <silent> <Tab>  :pyxf /usr/share/clang/clang-format-6.0/clang-format.py<CR>
+
+" ========== Python Language ==========
+" python语法检查设置
+" 支持 Python 3.6+ 语法加亮
+" 虚拟环境支持 运行 Python 代码（<leader>r）
+" 添加 / 删除断点（<leader>b）
+" 改善了的 Python 缩进
+" Python 的移动命令和操作符（]], 3[[, ]]M, vaC, viM, daC, ciM, …）
+" 改善了的 Python 折叠
+" 同时运行多个代码检查器（:PymodeLint）
+" 自动修正 PEP 8 错误（:PymodeLintAuto）
+" 自动在 Python 文档里搜索（K）
+" 代码重构 智能感知的代码完成 跳转到定义（<C-c>g）
+"
+function! IsGitRepo()
+  " This function requires GitPython
+  if has('pythonx')
+pythonx << EOF
+try:
+    import git
+except ImportError:
+    pass
+import vim
+
+def is_git_repo():
+    try:
+        _ = git.Repo('.', search_parent_directories=True).git_dir
+        return 1
+    except:
+        return 0
+EOF
+    return pyxeval('is_git_repo()')
+  else
+    return 0
+  endif
+endfunction
+
+let g:pymode_rope = IsGitRepo()           " 检查是否为Git库函数
+let g:pymode_rope_completion = 1          " 启用rope完成功能
+let g:pymode_rope_complete_on_dot = 0     " 禁用.自动完成指令使用YCM，使用<C-X><C-O>可使用rope原生
+let g:pymode_syntax_print_as_function = 1 " print作为保留字
+let g:pymode_syntax_string_format = 0     " 不对格式化字符串加亮
+let g:pymode_syntax_string_templates = 0  " 不对模板加亮
+let g:pymode_folding = 1                  " 代码自动折叠
+
+" python-mode代码检查器
+let g:pymode_lint_checkers = ['pyflakes', 'pep8', 'mccabe']
+" 是否启用rope功能
+let g:pymode_rope = 0
+
+function SetPyLintMode(mode)
+  let l:pm = a:mode
+  if l:pm == 1
+    " 是否启用python-mode的语法检查功能
+    let g:pymode_lint = 0
+    " 在禁用python-mode的情况下使用pylint
+    let g:ale_linters = {
+          \'python': ['pylint'],
+          \}
+  endif
+endfunction
+
+call SetPyLintMode(0)
