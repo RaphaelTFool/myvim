@@ -20,19 +20,13 @@ set enc=utf-8
 set nocompatible
 source $VIMRUNTIME/vimrc_example.vim
 
-" 启用 man 插件
-source $VIMRUNTIME/ftplugin/man.vim
-
-" 消除异常字符
-let &t_TI = ""
-let &t_TE = ""
+"" ========== 启用 man 插件 ==========
+source $VIMRUNTIME/ftplugin/man.vim     " 执行source man.vim会返回乱码值
+set keywordprg=:Man
 
 " 设置编码
 set fileencodings=ucs-bom,utf-8,gb18030,latin1
 set formatoptions+=mM
-" ========== 启用 man 插件 ==========
-source $VIMRUNTIME/ftplugin/man.vim
-set keywordprg=:Man
 " 设置拼写检查
 set mousemodel=popup_setpos
 " 设置语言纠错
@@ -44,11 +38,11 @@ set nobackup
 filetype plugin on
 syntax on
 
-" 加入记录系统头文件的标签文件和上层的 tags 文件
-set tags=./tags;,tags,/usr/local/etc/systags
-
 " 断行设置
 au FileType changelog  setlocal textwidth=76
+
+" 加入记录系统头文件的标签文件和上层的 tags 文件
+set tags=./tags;,tags,/usr/local/etc/systags
 
 if !has('gui_running')
   " 透明化
@@ -402,5 +396,4 @@ function SetPyLintMode(mode)
           \}
   endif
 endfunction
-
-call SetPyLintMode(0)
+call SetPyLintMode(0)   " 0禁用 1启用
