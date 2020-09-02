@@ -2,6 +2,12 @@ set enc=utf-8
 set nocompatible
 source $VIMRUNTIME/vimrc_example.vim
 
+" 修改光标上下键一次移动一个屏幕行
+nnoremap <Up>        gk
+inoremap <Up>   <C-O>gk
+nnoremap <Down>      gj
+inoremap <Down> <C-O>gj
+
 " 断行设置
 au FileType changelog  setlocal textwidth=76
 
@@ -65,6 +71,12 @@ set nobackup
 set scrolloff=1
 filetype plugin on
 syntax on
+
+" 设置拼写检查
+set mousemodel=popup_setpos
+" 设置语言纠错
+set spelllang=en_gb,en_us   " 英语，美语
+set spelllang+=cjk          " 中文
 
 " tab缩进设置
 au FileType c,cpp,objc  setlocal expandtab shiftwidth=4 softtabstop=4 tabstop=4 cinoptions=:0,g0,(0,w1
