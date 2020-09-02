@@ -78,6 +78,10 @@ set mousemodel=popup_setpos
 set spelllang=en_gb,en_us   " 英语，美语
 set spelllang+=cjk          " 中文
 
+" 替换光标下单词的键映射
+nnoremap <Leader>v viw"0p
+vnoremap <Leader>v    "0p
+
 " tab缩进设置
 au FileType c,cpp,objc  setlocal expandtab shiftwidth=4 softtabstop=4 tabstop=4 cinoptions=:0,g0,(0,w1
 au FileType json        setlocal expandtab shiftwidth=2 softtabstop=2
@@ -138,6 +142,9 @@ if exists('*minpac#init')
   call minpac#add('vim-airline/vim-airline')
   call minpac#add('vim-airline/vim-airline-themes')
   call minpac#add('vim-scripts/SyntaxAttr.vim')
+  " C编程支持
+  call minpac#add('mbbill/echofunc')
+  call minpac#add('adah1972/cscope_maps.vim')
 endif
 
 if has('eval')
@@ -254,3 +261,45 @@ let g:ycm_key_invoke_completion = '<C-Z>'
 " rtags配置
 let g:rtagsUseLocationList = 0
 
+" C语言语法高亮精调
+let g:c_space_errors = 1        " 标记空格错误
+let g:c_gnu = 1                 " 激活gnu扩展
+let g:c_no_cformat = 1          " 不对格式化字符串加亮
+let g:c_no_curly_error = 1      " 让GNU扩展不被标志成错误
+if exists('g:c_comment_strings')
+  unlet g:c_comment_strings     " 关闭注释中的加亮
+endif
+" CTags索引自动更新
+" 注意，可以使用插件'ludovicchabant/vim-gutentags'代替
+function! RunCtagsForC(root_path)
+  " 保存当前目录
+  let saved_path = getcwd()
+  " 进入到项目根目录
+  exe 'lcd ' . a:root_path
+  " 执行 ctags；silent 会抑制执行完的确认提示
+  silent !ctags --languages=c --langmap=c:.c.h --fields=+S -R .
+  " 恢复原先目录
+  exe 'lcd ' . saved_path
+endfunction
+
+" 当 /project/path/ 下文件改动时，更新 tags
+au BufWritePost /project/path/* call 
+      \ AppendCtagsForC('/project/path/', expand('%'))
+
+" echofunc气泡控制
+let g:EchoFuncAutoStartBalloonDeclaration = 1
+
+" cscope利用quickfix分窗口
+" g：查找一个符号的全局定义（global definition）
+" s：查找一个符号（symbol）的引用
+" d：查找被这个函数调用（called）的函数
+" c：查找调用（call）这个函数的函数
+" t：查找这个文本（text）字符串的所有出现位置
+" e：使用 egrep 搜索模式进行查找
+" f：按照文件（file）名查找（和 Vim 的 gf、<C-W>f 命令相似）
+" i：查找包含（include）这个文件的文件
+" a：查找一个符号被赋值（assigned）的地方
+set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
+
+" clangformat代码格式化
+noremap <silent> <Tab>  :pyxf /usr/share/clang/clang-format-6.0/clang-format.py<CR>
