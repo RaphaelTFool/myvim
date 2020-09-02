@@ -2,6 +2,10 @@ set enc=utf-8
 set nocompatible
 source $VIMRUNTIME/vimrc_example.vim
 
+" 消除异常字符
+let &t_TI = ""
+let &t_TE = ""
+
 " 修改光标上下键一次移动一个屏幕行
 nnoremap <Up>        gk
 inoremap <Up>   <C-O>gk
