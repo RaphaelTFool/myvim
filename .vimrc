@@ -16,6 +16,11 @@ if has('gui_running')
   let do_no_lazyload_menus = 1
 endif
 
+" 自动切换到已打开的窗口
+if v:version >= 800
+  packadd! editexisting
+endif
+
 set enc=utf-8
 set nocompatible
 source $VIMRUNTIME/vimrc_example.vim
@@ -38,8 +43,25 @@ set nobackup
 filetype plugin on
 syntax on
 
-" 断行设置
-au FileType changelog  setlocal textwidth=76
+" 其它设置
+set cul                         "高亮光标所在行
+set cuc
+autocmd InsertEnter * se cul    " 用浅色高亮当前行
+set ruler                       " 显示标尺
+set showcmd                     " 输入的命令显示出来，看的清楚些
+" 自动缩进
+set autoindent
+set cindent
+"搜索逐字符高亮
+set hlsearch
+set incsearch
+" 带有如下符号的单词不要被换行分割
+set iskeyword+=_,$,@,%,#,-
+set magic                       " 设置魔术
+set noeb                        " 去掉输入错误的提示声音
+set confirm                     " 在处理未保存或只读文件的时候，弹出确认
+set showmatch                   " 高亮显示匹配的括号
+set matchtime=1                 " 匹配括号高亮的时间（单位是十分之一秒）
 
 " 加入记录系统头文件的标签文件和上层的 tags 文件
 set tags=./tags;,tags,/usr/local/etc/systags
@@ -104,14 +126,6 @@ let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline#extensions#tabline#formatter = 'default'
 set number
 set laststatus=2
-
-" tab缩进设置
-au FileType c,cpp,objc  setlocal expandtab shiftwidth=4 softtabstop=4 tabstop=4 cinoptions=:0,g0,(0,w1
-au FileType json        setlocal expandtab shiftwidth=2 softtabstop=2
-au FileType vim         setlocal expandtab shiftwidth=2 softtabstop=2
-
-" 按q关闭帮助页面
-au FileType help  nnoremap <buffer> q <C-W>c
 
 " 设置跨会话文件缓存
 if has('persistent_undo')
@@ -190,11 +204,6 @@ if !has('patch-8.0.210')
   endfunction
 endif
 
-" 自动切换到已打开的窗口
-if v:version >= 800
-  packadd! editexisting
-endif
-
 " 修改光标上下键一次移动一个屏幕行
 nnoremap <Up>        gk
 inoremap <Up>   <C-O>gk
@@ -237,6 +246,16 @@ nnoremap <C-F11> :tn<CR>
 nnoremap <C-F12> :tp<CR>
 nnoremap <S-F11> :n<CR>
 nnoremap <S-F12> :prev<CR>
+
+if has('autocmd')
+" 断行设置
+au FileType changelog  setlocal textwidth=76
+" tab缩进设置
+au FileType c,cpp,objc  setlocal expandtab shiftwidth=4 softtabstop=4 tabstop=4 cinoptions=:0,g0,(0,w1
+au FileType json        setlocal expandtab shiftwidth=2 softtabstop=2
+au FileType vim         setlocal expandtab shiftwidth=2 softtabstop=2
+" 按q关闭帮助页面
+au FileType help  nnoremap <buffer> q <C-W>c
 
 "========== make命令构建 ==========
 " 和 asyncrun 一起用的异步 make 命令
@@ -397,3 +416,60 @@ function SetPyLintMode(mode)
   endif
 endfunction
 call SetPyLintMode(0)   " 0禁用 1启用
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""新文件标题
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"新建.c,.h,.sh,.java文件，自动插入文件头
+autocmd BufNewFile *.cpp,*.[ch],*.sh,*.rb,*.java,*.py exec ":call SetTitle()"
+""定义函数SetTitle，自动插入文件头
+func SetTitle()
+  "如果文件类型为.sh文件
+  if &filetype == 'sh'
+    call setline(1,"\#!/bin/bash")
+    call append(line("."), "")
+  elseif &filetype == 'python'
+    call setline(1,"#!/usr/bin/env python")
+    call append(line("."),"# coding=utf-8")
+    call append(line(".")+1, "")
+  elseif &filetype == 'ruby'
+    call setline(1,"#!/usr/bin/env ruby")
+    call append(line("."),"# encoding: utf-8")
+    call append(line(".")+1, "")
+" elseif &filetype == 'mkd'
+" call setline(1,"<head><meta charset=\"UTF-8\"></head>")
+  else
+    call setline(1, "/*************************************************************************")
+    call append(line("."), "	> File Name: ".expand("%"))
+    call append(line(".")+1, "	> Author: RaphaelTFool")
+    call append(line(".")+2, "	> Mail: 1207975808@qq.com")
+    call append(line(".")+3, "	> Created Time: ".strftime("%c"))
+    call append(line(".")+4, " ************************************************************************/")
+    call append(line(".")+5, "")
+  endif
+  if expand("%:e") == 'cpp'
+    call append(line(".")+6, "#include<iostream>")
+    call append(line(".")+7, "using namespace std;")
+    call append(line(".")+8, "")
+  endif
+  if &filetype == 'c'
+    call append(line(".")+6, "#include<stdio.h>")
+    call append(line(".")+7, "")
+  endif
+  if expand("%:e") == 'h'
+    call append(line(".")+6, "#ifndef _".toupper(expand("%:r"))."_H")
+    call append(line(".")+7, "#define _".toupper(expand("%:r"))."_H")
+    call append(line(".")+8, "#endif")
+  endif
+  if &filetype == 'java'
+    call append(line(".")+6,"public class ".expand("%:r"))
+    call append(line(".")+7,"")
+  endif
+endfunc
+"新建文件后，自动定位到文件末尾
+autocmd BufNewFile * normal G
+"当打开vim且没有文件时自动打开NERDTree
+autocmd vimenter * if !argc() | NERDTree | endif
+" 只剩 NERDTree时自动关闭
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+endif
