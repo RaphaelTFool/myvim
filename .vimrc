@@ -1,39 +1,81 @@
+" vim:set expandtab shiftwidth=2 tabstop=8 textwidth=72:
+
+if has('autocmd')
+  " 为了可以重新执行 vimrc，开头先清除当前组的自动命令
+  au!
+endif
+
+" 设置等宽字体
+if has('gui_running')
+  " 下面两行仅为占位使用；请填入你自己的字体
+  set guifont=DejaVu\ Sans\ Mono\ 16
+  set guifontwide=DejaVu\ Sans\ Mono\ 16
+
+  " 不延迟加载菜单（需要放在下面的 source 语句之前）
+  let do_syntax_sel_menu = 1
+  let do_no_lazyload_menus = 1
+endif
+
 set enc=utf-8
 set nocompatible
 source $VIMRUNTIME/vimrc_example.vim
+
+" 启用 man 插件
+source $VIMRUNTIME/ftplugin/man.vim
 
 " 消除异常字符
 let &t_TI = ""
 let &t_TE = ""
 
-" 修改光标上下键一次移动一个屏幕行
-nnoremap <Up>        gk
-inoremap <Up>   <C-O>gk
-nnoremap <Down>      gj
-inoremap <Down> <C-O>gj
+" 设置编码
+set fileencodings=ucs-bom,utf-8,gb18030,latin1
+set formatoptions+=mM
+" ========== 启用 man 插件 ==========
+source $VIMRUNTIME/ftplugin/man.vim
+set keywordprg=:Man
+" 设置拼写检查
+set mousemodel=popup_setpos
+" 设置语言纠错
+set spelllang=en_gb,en_us   " 英语，美语
+set spelllang+=cjk          " 中文
+set scrolloff=1
+set nobackup
+
+filetype plugin on
+syntax on
+
+" 加入记录系统头文件的标签文件和上层的 tags 文件
+set tags=./tags;,tags,/usr/local/etc/systags
 
 " 断行设置
 au FileType changelog  setlocal textwidth=76
 
-" 透明化
 if !has('gui_running')
+  " 透明化
   func! s:transparent_background()
     highlight Normal guibg=NONE ctermbg=NONE
     highlight NonText guibg=NONE ctermbg=NONE
   endf
   autocmd ColorScheme * call s:transparent_background()
+
+  " mru最近打开文件cmd
+  " 设置文本菜单
+  if has('wildmenu')
+    set wildmenu
+    set cpoptions-=<
+    set wildcharm=<C-Z>
+    nnoremap <F10>      :emenu <C-Z>
+    inoremap <F10> <C-O>:emenu <C-Z>
+  endif
+
+  " 检测并设置真彩色
+  if has('termguicolors') &&
+        \($COLORTERM == 'truecolor' || $COLORTERM == '24bit')
+    set termguicolors
+  endif
 endif
 
 " 设置主题
-" 设置等宽字体
-if has('gui_running')
-  set guifont=DejaVu\ Sans\ Mono\ 16
-endif
-" 检测并设置真彩色
-if has('termguicolors') &&
-      \($COLORTERM == 'truecolor' || $COLORTERM == '24bit')
-  set termguicolors
-endif
 " 检查配色详情
 nnoremap <Leader>a :call SyntaxAttr()<CR>
 " 设置papercolor主题属性
@@ -69,36 +111,13 @@ let g:airline#extensions#tabline#formatter = 'default'
 set number
 set laststatus=2
 
-" 设置编码
-set fileencodings=ucs-bom,utf-8,gb18030,latin1
-set nobackup
-set scrolloff=1
-filetype plugin on
-syntax on
-
-" 设置拼写检查
-set mousemodel=popup_setpos
-" 设置语言纠错
-set spelllang=en_gb,en_us   " 英语，美语
-set spelllang+=cjk          " 中文
-
-" 替换光标下单词的键映射
-nnoremap <Leader>v viw"0p
-vnoremap <Leader>v    "0p
-
 " tab缩进设置
 au FileType c,cpp,objc  setlocal expandtab shiftwidth=4 softtabstop=4 tabstop=4 cinoptions=:0,g0,(0,w1
 au FileType json        setlocal expandtab shiftwidth=2 softtabstop=2
 au FileType vim         setlocal expandtab shiftwidth=2 softtabstop=2
 
-" /usr/include代码gnu风格
-function! GnuIndent()
-  setlocal cinoptions=>4,n-2,{2,^-2,:2,=2,g0,h2,p5,t0,+2,(0,u0,w1,m1
-  setlocal shiftwidth=2
-  setlocal tabstop=8
-endfunction
-
-au BufRead /usr/include/*  call GnuIndent()
+" 按q关闭帮助页面
+au FileType help  nnoremap <buffer> q <C-W>c
 
 " 设置跨会话文件缓存
 if has('persistent_undo')
@@ -117,10 +136,6 @@ if has('mouse')
     set mouse=nvi
   endif
 endif
-
-" 菜单全展开
-let do_syntax_sel_menu = 1
-let do_no_lazyload_menus = 1
 
 " minpac包管理器加载
 if exists('*minpac#init')
@@ -159,18 +174,8 @@ if has('eval')
   command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update('', {'do': 'call minpac#status()'})
   command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
   command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()
-endif
-
-" mru最近打开文件cmd
-if !has('gui_running')
-  " 设置文本菜单
-  if has('wildmenu')
-    set wildmenu
-    set cpoptions-=<
-    set wildcharm=<C-Z>
-    nnoremap <F10>      :emenu <C-Z>
-    inoremap <F10> <C-O>:emenu <C-Z>
-  endif
+  " 和 asyncrun 一起用的异步 make 命令
+  command! -bang -nargs=* -complete=file Make AsyncRun -program=make @ <args>
 endif
 
 " 自动识别粘贴模式
@@ -196,6 +201,16 @@ if v:version >= 800
   packadd! editexisting
 endif
 
+" 修改光标上下键一次移动一个屏幕行
+nnoremap <Up>        gk
+inoremap <Up>   <C-O>gk
+nnoremap <Down>      gj
+inoremap <Down> <C-O>gj
+
+" 替换光标下单词的键映射
+nnoremap <Leader>v viw"0p
+vnoremap <Leader>v    "0p
+
 " 切换窗口
 nnoremap <C-Tab>   <C-W>w
 inoremap <C-Tab>   <C-O><C-W>w
@@ -206,19 +221,28 @@ inoremap <C-S-Tab> <C-O><C-W>W
 nnoremap <silent> <F2>      :nohlsearch<CR>
 inoremap <silent> <F2> <C-O>:nohlsearch<CR>
 
-" 按q关闭帮助页面
-au FileType help  nnoremap <buffer> q <C-W>c
-
-" 加入记录系统头文件的标签文件和上层的 tags 文件
-set tags=./tags;,tags,/usr/local/etc/systags
+" 开关撤销树的键映射
+nnoremap <F6>      :UndotreeToggle<CR>
+inoremap <F6> <C-O>:UndotreeToggle<CR>
 
 " 开关Tagbar 插件的键映射
 nnoremap <F9>      :TagbarToggle<CR>
 inoremap <F9> <C-O>:TagbarToggle<CR>
 
-" 替换光标下单词的键映射
-nnoremap <Leader>v viw"0p
-vnoremap <Leader>v    "0p
+" 用于 quickfix、标签和文件跳转的键映射
+if !has('mac')
+nnoremap <F11>   :cn<CR>
+nnoremap <F12>   :cp<CR>
+else
+nnoremap <D-F11> :cn<CR>
+nnoremap <D-F12> :cp<CR>
+endif
+nnoremap <M-F11> :copen<CR>
+nnoremap <M-F12> :cclose<CR>
+nnoremap <C-F11> :tn<CR>
+nnoremap <C-F12> :tp<CR>
+nnoremap <S-F11> :n<CR>
+nnoremap <S-F12> :prev<CR>
 
 "========== make命令构建 ==========
 " 和 asyncrun 一起用的异步 make 命令
@@ -235,19 +259,24 @@ nnoremap <F5>  :if g:asyncrun_status != 'running'<bar>
                  \AsyncStop<bar>
                \endif<CR>>
 
-" ========== 启用 man 插件 ==========
-source $VIMRUNTIME/ftplugin/man.vim
-set keywordprg=:Man
+" /usr/include代码gnu风格
+function! GnuIndent()
+  setlocal cinoptions=>4,n-2,{2,^-2,:2,=2,g0,h2,p5,t0,+2,(0,u0,w1,m1
+  setlocal shiftwidth=2
+  setlocal tabstop=8
+endfunction
+au BufRead /usr/include/*  call GnuIndent()
 
 " ========== YouCompleteMe ==========
 " YouCompleteMe自动补全配置
-let g:ycm_use_clangd = 1    " 是否使用最新clangd引擎
 nnoremap <Leader>fi :YcmCompleter FixIt<CR>
 nnoremap <Leader>gt :YcmCompleter GoTo<CR>
 nnoremap <Leader>gd :YcmCompleter GoToDefinition<CR>
 nnoremap <Leader>gh :YcmCompleter GoToDeclaration<CR>
 nnoremap <Leader>gr :YcmCompleter GoToReferences<CR>
 
+" 是否使用最新clangd引擎
+let g:ycm_use_clangd = 1
 " 禁用光标长期停留的自动文档提示
 let g:ycm_auto_hover = ''
 " 注释中的自动完成
