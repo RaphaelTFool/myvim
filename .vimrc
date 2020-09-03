@@ -93,37 +93,49 @@ endif
 
 " 设置主题
 " 检查配色详情
+" 0 使用default 1使用papercolor 2使用onedark
+function! SetCustmizedTheme(mode)
+  let l:pm = a:mode
+  if l:pm == 'PaperColor'
+    colorscheme PaperColor
+    let g:airline_theme='papercolor'
+    let g:lightline = { 'colorscheme': 'PaperColor' }
+    " 设置papercolor主题属性
+    let g:PaperColor_Theme_Options = {
+      \   'theme': {
+      \     'default.dark': {
+      \       'transparent_background': 0
+      \     }
+      \   },
+      \   'language': {
+      \     'python': {
+      \       'highlight_builtins' : 1
+      \     },
+      \     'cpp': {
+      \       'highlight_standard_library': 1
+      \     },
+      \     'c': {
+      \       'highlight_builtins' : 1
+      \     }
+      \   }
+      \ }
+  elseif l:pm == 'onedark'
+    colorscheme onedark
+    let g:airline_theme='onedark'
+    let g:lightline = { 'colorscheme': 'onedark' }
+    let g:airline#extensions#tabline#enabled = 1
+    let g:airline#extensions#tabline#left_sep = ' '
+    let g:airline#extensions#tabline#left_alt_sep = '|'
+    let g:airline#extensions#tabline#formatter = 'default'
+  else
+    colorscheme default
+  endif
+endfunction
+
 nnoremap <Leader>a :call SyntaxAttr()<CR>
-" 设置papercolor主题属性
-let g:PaperColor_Theme_Options = {
-  \   'theme': {
-  \     'default.dark': {
-  \       'transparent_background': 0
-  \     }
-  \   },
-  \   'language': {
-  \     'python': {
-  \       'highlight_builtins' : 1
-  \     },
-  \     'cpp': {
-  \       'highlight_standard_library': 1
-  \     },
-  \     'c': {
-  \       'highlight_builtins' : 1
-  \     }
-  \   }
-  \ }
 set background=dark
-colorscheme PaperColor
-let g:airline_theme='papercolor'
-let g:lightline = { 'colorscheme': 'PaperColor' }
-"colorscheme onedark
-"let g:airline_theme='onedark'
-"let g:lightline = { 'colorscheme': 'onedark' }
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = '|'
-let g:airline#extensions#tabline#formatter = 'default'
+call SetCustmizedTheme('onedark')
+
 set number
 set laststatus=2
 
@@ -172,6 +184,7 @@ if exists('*minpac#init')
   " C编程支持
   call minpac#add('mbbill/echofunc')
   call minpac#add('adah1972/cscope_maps.vim')
+  call minpac#add('octol/vim-cpp-enhanced-highlight')
   " python编程支持
   call minpac#add('python-mode/python-mode')
   call minpac#add('dense-analysis/ale')
@@ -355,6 +368,21 @@ set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
 " clangformat代码格式化
 noremap <silent> <Tab>  :pyxf /usr/share/clang/clang-format-6.0/clang-format.py<CR>
 
+" C/CPP语法高亮设置
+" octol/vim-cpp-enhanced-highlight
+if 1
+  let g:cpp_class_scope_highlight = 1
+  let g:cpp_member_variable_highlight = 1
+  let g:cpp_posix_standard = 1
+  let g:cpp_concepts_highlight = 1
+  let g:cpp_class_decl_highlight = 1
+  let c_no_curly_error=1
+else
+  let g:cpp_experimental_simple_template_highlight = 1
+  let g:cpp_experimental_template_highlight = 0
+  let g:cpp_no_function_highlight = 0
+endif
+
 " ========== Python Language ==========
 " python语法检查设置
 " 支持 Python 3.6+ 语法加亮
@@ -391,20 +419,7 @@ EOF
   endif
 endfunction
 
-let g:pymode_rope = IsGitRepo()           " 检查是否为Git库函数
-let g:pymode_rope_completion = 1          " 启用rope完成功能
-let g:pymode_rope_complete_on_dot = 0     " 禁用.自动完成指令使用YCM，使用<C-X><C-O>可使用rope原生
-let g:pymode_syntax_print_as_function = 1 " print作为保留字
-let g:pymode_syntax_string_format = 0     " 不对格式化字符串加亮
-let g:pymode_syntax_string_templates = 0  " 不对模板加亮
-let g:pymode_folding = 1                  " 代码自动折叠
-
-" python-mode代码检查器
-let g:pymode_lint_checkers = ['pyflakes', 'pep8', 'mccabe']
-" 是否启用rope功能
-let g:pymode_rope = 0
-
-function SetPyLintMode(mode)
+function! SetPyLintMode(mode)
   let l:pm = a:mode
   if l:pm == 1
     " 是否启用python-mode的语法检查功能
@@ -413,6 +428,19 @@ function SetPyLintMode(mode)
     let g:ale_linters = {
           \'python': ['pylint'],
           \}
+  else
+    let g:pymode_rope = IsGitRepo()           " 检查是否为Git库函数
+    let g:pymode_rope_completion = 1          " 启用rope完成功能
+    let g:pymode_rope_complete_on_dot = 0     " 禁用.自动完成指令使用YCM，使用<C-X><C-O>可使用rope原生
+    let g:pymode_syntax_print_as_function = 1 " print作为保留字
+    let g:pymode_syntax_string_format = 0     " 不对格式化字符串加亮
+    let g:pymode_syntax_string_templates = 0  " 不对模板加亮
+    let g:pymode_folding = 1                  " 代码自动折叠
+    
+    " python-mode代码检查器
+    let g:pymode_lint_checkers = ['pyflakes', 'pep8', 'mccabe']
+    " 是否启用rope功能
+    let g:pymode_rope = 0
   endif
 endfunction
 call SetPyLintMode(0)   " 0禁用 1启用
