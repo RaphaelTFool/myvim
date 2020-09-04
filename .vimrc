@@ -89,6 +89,9 @@ if !has('gui_running')
         \($COLORTERM == 'truecolor' || $COLORTERM == '24bit')
     set termguicolors
   endif
+
+  " NERDCommenter控制
+  let g:NERDMenuMode = 0
 endif
 
 " 设置主题
@@ -123,10 +126,6 @@ function! SetCustmizedTheme(mode)
     colorscheme onedark
     let g:airline_theme='onedark'
     let g:lightline = { 'colorscheme': 'onedark' }
-    let g:airline#extensions#tabline#enabled = 1
-    let g:airline#extensions#tabline#left_sep = ' '
-    let g:airline#extensions#tabline#left_alt_sep = '|'
-    let g:airline#extensions#tabline#formatter = 'default'
   else
     colorscheme default
   endif
@@ -188,6 +187,11 @@ if exists('*minpac#init')
   " python编程支持
   call minpac#add('python-mode/python-mode')
   call minpac#add('dense-analysis/ale')
+  " 额外常用功能支持
+  call minpac#add('tpope/vim-fugitive')
+  call minpac#add('airblade/vim-gitgutter')
+  call minpac#add('preservim/nerdcommenter')
+  call minpac#add('mg979/vim-visual-multi')
 endif
 
 if has('eval')
@@ -215,6 +219,27 @@ if !has('patch-8.0.210')
     set paste
     return ""
   endfunction
+endif
+
+" gitgutter配色方案
+if 1
+  highlight! link SignColumn LineNr
+  highlight GitGutterAdd        guifg=#009900 ctermfg=2
+  highlight GitGutterChange     guifg=#bbbb00 ctermfg=3
+  highlight GitGutterDelete     guifg=#ff2222 ctermfg=1
+  let g:gitgutter_set_sign_backgrounds = 1
+endif
+
+" airline配置
+if 1
+  let g:airline#extensions#tabline#enabled = 1
+  let g:airline#extensions#tabline#left_sep = ' '
+  let g:airline#extensions#tabline#left_alt_sep = '|'
+  let g:airline#extensions#tabline#formatter = 'default'
+  let g:airline_powerline_fonts = 1
+  let g:airline#extensions#tabline#buffer_nr_show = 1
+  let g:airline#extensions#tabline#overflow_marker = '…'
+  let g:airline#extensions#tabline#show_tab_nr = 0
 endif
 
 " 修改光标上下键一次移动一个屏幕行
