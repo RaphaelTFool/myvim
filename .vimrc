@@ -192,6 +192,13 @@ if exists('*minpac#init')
   call minpac#add('airblade/vim-gitgutter')
   call minpac#add('preservim/nerdcommenter')
   call minpac#add('mg979/vim-visual-multi')
+  call minpac#add('frazrepo/vim-rainbow')
+  call minpac#add('jiangmiao/auto-pairs')
+  call minpac#add('vim-scripts/LargeFile')
+  " 玩具
+  call minpac#add('mattn/calendar-vim')
+  call minpac#add('uguu-org/vim-matrix-screensaver')
+  call minpac#add('vim/killersheep')
 endif
 
 if has('eval')
@@ -526,3 +533,15 @@ autocmd vimenter * if !argc() | NERDTree | endif
 " 只剩 NERDTree时自动关闭
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 endif
+
+" 括号自动匹配配置
+let g:AutoPairsShortcutToggle = 'π'
+
+" 大文件阈值
+let g:LargeFile = 100
+
+" 最后一个窗口如果是quickfix，则自动关闭
+aug QFClose
+  au!
+  au WinEnter *  if winnr('$') == 1 && &buftype == "quickfix"|q|endif
+aug END
