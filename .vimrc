@@ -535,7 +535,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 endif
 
 " 括号自动匹配配置
-let g:AutoPairsShortcutToggle = 'π'
+let g:AutoPairsShortcutToggle = '<Leader>p'
 
 " 大文件阈值
 let g:LargeFile = 100
