@@ -254,6 +254,7 @@ nnoremap <Up>        gk
 inoremap <Up>   <C-O>gk
 nnoremap <Down>      gj
 inoremap <Down> <C-O>gj
+inoremap <C-L>  <Right>
 
 " 替换光标下单词的键映射
 nnoremap <Leader>v viw"0p
