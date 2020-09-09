@@ -199,6 +199,7 @@ if exists('*minpac#init')
   call minpac#add('mattn/calendar-vim')
   call minpac#add('uguu-org/vim-matrix-screensaver')
   call minpac#add('vim/killersheep')
+  call minpac#add('wikitopian/hardmode')
 endif
 
 if has('eval')
@@ -255,6 +256,8 @@ inoremap <Up>   <C-O>gk
 nnoremap <Down>      gj
 inoremap <Down> <C-O>gj
 inoremap <C-L>  <Right>
+autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
+nnoremap <leader>h <Esc>:call ToggleHardMode()<CR>
 
 " 替换光标下单词的键映射
 nnoremap <Leader>v viw"0p
