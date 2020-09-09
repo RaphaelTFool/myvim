@@ -51,6 +51,7 @@ set ruler                       " 显示标尺
 set showcmd                     " 输入的命令显示出来，看的清楚些
 " 自动缩进
 set autoindent
+set smartindent
 set cindent
 "搜索逐字符高亮
 set hlsearch
@@ -317,19 +318,54 @@ au FileType vim         setlocal expandtab shiftwidth=2 softtabstop=2
 au FileType help  nnoremap <buffer> q <C-W>c
 
 "========== make命令构建 ==========
-" 和 asyncrun 一起用的异步 make 命令
-command! -bang -nargs=* -complete=file Make AsyncRun -program=make @ <args
 " 异步运行命令时打开 quickfix 窗口，高度为 10 行
 let g:asyncrun_open = 10
 " 映射按键来快速启停构建
-nnoremap <F5>  :if g:asyncrun_status != 'running'<bar>
-                 \if &modifiable<bar>
-                   \update<bar>
-                 \endif<bar>
-                 \exec 'Make'<bar>
-               \else<bar>
-                 \AsyncStop<bar>
-               \endif<CR>>
+" nnoremap <F5>  :if g:asyncrun_status != 'running'<bar>
+"                  \if &modifiable<bar>
+"                    \update<bar>
+"                  \endif<bar>
+"                  \exec 'Make'<bar>
+"                \else<bar>
+"                  \AsyncStop<bar>
+"                \endif<CR>>
+
+"C，C++ 按F5编译运行
+map <F5> :call CompileGcc()<CR>
+func! CompileGcc()
+  if &filetype == 'c'
+    :AsyncRun g++ '%' -g -Wall -Wfatal-errors -std=c99 -o '%<'
+  elseif &filetype == 'cpp'
+    :AsyncRun g++ '%' -g -Wall -Wfatal-errors -std=c++11 -o '%<'
+  elseif &filetype == 'java' 
+    :AsyncRun javac '%' 
+  elseif &filetype == 'go'
+    :AsyncRun go build '%<'
+  endif
+endfunc
+
+"C，C++ 按F7编译运行
+map <F7> :call RunningGcc()<CR>
+func! RunningGcc()
+  if &filetype == 'c'
+    :AsyncRun time ./'%<'
+  elseif &filetype == 'cpp'
+    :AsyncRun time ./'%<'
+  elseif &filetype == 'java' 
+    :AsyncRun time java '%<'
+  elseif &filetype == 'sh'
+    :AsyncRun time bash '%'
+  elseif &filetype == 'python'
+    AsyncRun time python '%'
+  elseif &filetype == 'html'
+    AsyncRun firefox '%' &
+  elseif &filetype == 'go'
+    AsyncRun time go run '%'
+  endif
+endfunc
+
+" gdb 按F8调试
+map <F8> :packadd termdebug<CR>:Termdebug %<<CR>
 
 " /usr/include代码gnu风格
 function! GnuIndent()
