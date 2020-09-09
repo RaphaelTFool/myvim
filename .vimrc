@@ -259,6 +259,16 @@ inoremap <C-L>  <Right>
 autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
 nnoremap <leader>h <Esc>:call ToggleHardMode()<CR>
 
+" 在终端模式下利用Esc退出
+tnoremap <Esc><Esc>  <C-\><C-N>
+tnoremap <C-V><Esc> <Esc>
+
+" 避免在终端模式嵌套启用vim
+if exists('$VIM_TERMINAL')
+  echoerr 'Do not run Vim inside a Vim terminal'
+  quit
+endif
+
 " 替换光标下单词的键映射
 nnoremap <Leader>v viw"0p
 vnoremap <Leader>v    "0p
