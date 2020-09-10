@@ -595,3 +595,6 @@ aug QFClose
   au!
   au WinEnter *  if winnr('$') == 1 && &buftype == "quickfix"|q|endif
 aug END
+
+" 开启括号彩虹色
+let g:rainbow_active = 1
