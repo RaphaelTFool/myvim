@@ -8,9 +8,9 @@ endif
 " 设置等宽字体
 if has('gui_running')
   " 下面两行仅为占位使用；请填入你自己的字体
-  set guifont=DejaVu\ Sans\ Mono\ 16
-  set guifontwide=DejaVu\ Sans\ Mono\ 16
-
+  "set guifont=SourceCodeVariable\ 16
+  set guifont=FiraCode\ 16
+  set guifontwide=Microsoft\ YaHei\ 16
   " 不延迟加载菜单（需要放在下面的 source 语句之前）
   let do_syntax_sel_menu = 1
   let do_no_lazyload_menus = 1
