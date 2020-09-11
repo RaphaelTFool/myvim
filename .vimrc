@@ -8,8 +8,8 @@ endif
 " 设置等宽字体
 if has('gui_running')
   " 下面两行仅为占位使用；请填入你自己的字体
-  "set guifont=SourceCodeVariable\ 16
-  set guifont=FiraCode\ 16
+  set guifont=SourceCodeVariable\ 16
+  "set guifont=FiraCode\ 16
   set guifontwide=Microsoft\ YaHei\ 16
   " 不延迟加载菜单（需要放在下面的 source 语句之前）
   let do_syntax_sel_menu = 1
@@ -285,8 +285,8 @@ nnoremap <silent> <F2>      :nohlsearch<CR>
 inoremap <silent> <F2> <C-O>:nohlsearch<CR>
 
 " 开关撤销树的键映射
-nnoremap <F6>      :UndotreeToggle<CR>
-inoremap <F6> <C-O>:UndotreeToggle<CR>
+nnoremap <F3>      :UndotreeToggle<CR>
+inoremap <F3> <C-O>:UndotreeToggle<CR>
 
 " 开关Tagbar 插件的键映射
 nnoremap <F9>      :TagbarToggle<CR>
@@ -321,17 +321,17 @@ au FileType help  nnoremap <buffer> q <C-W>c
 " 异步运行命令时打开 quickfix 窗口，高度为 10 行
 let g:asyncrun_open = 10
 " 映射按键来快速启停构建
-" nnoremap <F5>  :if g:asyncrun_status != 'running'<bar>
-"                  \if &modifiable<bar>
-"                    \update<bar>
-"                  \endif<bar>
-"                  \exec 'Make'<bar>
-"                \else<bar>
-"                  \AsyncStop<bar>
-"                \endif<CR>>
+ nnoremap <F5>  :if g:asyncrun_status != 'running'<bar>
+                  \if &modifiable<bar>
+                    \update<bar>
+                  \endif<bar>
+                  \exec 'Make'<bar>
+                \else<bar>
+                  \AsyncStop<bar>
+                \endif<CR>>
 
-"C，C++ 按F5编译运行
-map <F5> :call CompileGcc()<CR>
+"C，C++ 按F6编译运行
+map <F6> :call CompileGcc()<CR>
 func! CompileGcc()
   if &filetype == 'c'
     :AsyncRun g++ '%' -g -Wall -Wfatal-errors -std=c99 -o '%<'
