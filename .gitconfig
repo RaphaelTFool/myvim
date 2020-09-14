@@ -1,0 +1,24 @@
+[user]
+    name = RaphaelTFool
+    email = 1207975808@qq.com
+[core]
+    editor = vim
+    paper = less
+    autocrlf = false
+    whitespace = trailing-space,space-before-tab,indent-with-non-tab
+[commit]
+    template = /home/raphael/.git-commit-template.txt
+[color]
+    ui = true
+[color "diff"]
+    meta = blue black bold
+[merge]
+    tool = extMerge
+[mergetool "extMerge"]
+    cmd = extMerge \"$BASE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
+[mergetool]
+    trustExitCode = false
+[diff]
+    external = extDiff
+[push]
+    default = simple
