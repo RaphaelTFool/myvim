@@ -258,7 +258,7 @@ nnoremap <Down>      gj
 inoremap <Down> <C-O>gj
 inoremap <C-L>  <Right>
 autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
-nnoremap <leader>h <Esc>:call ToggleHardMode()<CR>
+nnoremap <leader>q <Esc>:call ToggleHardMode()<CR>
 
 " 在终端模式下利用Esc退出
 tnoremap <Esc><Esc>  <C-\><C-N>
