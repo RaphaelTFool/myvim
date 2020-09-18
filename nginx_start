@@ -1,0 +1,27 @@
+#!/bin/bash
+
+function docker_nginx() {
+	if [[ $# -gt 2 ]] || [[ $# -lt 1 ]]; then
+		echo "Usage $0 [name] <proxy path>"
+		exit 1
+	fi
+
+	NAME=mynginx
+	if [[ $# -eq 2 ]]; then
+		NAME=$1
+		PATH=$2
+	else
+		PATH=$1
+	fi
+
+	if [[ ! -e $PATH ]]; then
+		echo "$PAHT not exist!"
+		exit 1
+	fi
+
+	echo "starting nginx ..."
+	/usr/bin/docker run -d --rm --name ${NAME} -p 8080:80 -v ${PATH}:/usr/share/nginx/html nginx:latest
+	echo "started"
+}
+
+docker_nginx ${PWD}
