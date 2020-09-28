@@ -25,9 +25,9 @@ set enc=utf-8
 set nocompatible
 source $VIMRUNTIME/vimrc_example.vim
 
-"" ========== 启用 man 插件 ==========
-source $VIMRUNTIME/ftplugin/man.vim     " 执行source man.vim会返回乱码值
-set keywordprg=:Man
+" ========== 启用 man 插件 ==========
+"source $VIMRUNTIME/ftplugin/man.vim     " 执行source man.vim会返回乱码值
+"set keywordprg=:Man
 
 " 设置编码
 set fileencodings=ucs-bom,utf-8,gb18030,latin1
@@ -39,6 +39,11 @@ set spelllang=en_gb,en_us   " 英语，美语
 set spelllang+=cjk          " 中文
 set scrolloff=1
 set nobackup
+
+" 按ESC两次自动保存
+map <Esc><Esc> :w<CR>
+" 适配<C-V>
+imap <C-V> <Esc>"+gp
 
 filetype plugin on
 syntax on
