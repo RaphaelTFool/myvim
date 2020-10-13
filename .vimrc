@@ -290,8 +290,12 @@ nnoremap <silent> <F2>      :nohlsearch<CR>
 inoremap <silent> <F2> <C-O>:nohlsearch<CR>
 
 " 开关撤销树的键映射
-nnoremap <F3>      :UndotreeToggle<CR>
-inoremap <F3> <C-O>:UndotreeToggle<CR>
+nnoremap <F4>      :UndotreeToggle<CR>
+inoremap <F4> <C-O>:UndotreeToggle<CR>
+
+" 开关NERDTree
+nnoremap <F3>      :NERDTreeToggle<CR>
+inoremap <F3> <C-O>:NERDTreeToggle<CR>
 
 " 开关Tagbar 插件的键映射
 nnoremap <F9>      :TagbarToggle<CR>
@@ -581,6 +585,7 @@ func SetTitle()
     call append(line(".")+7,"")
   endif
 endfunc
+
 "新建文件后，自动定位到文件末尾
 autocmd BufNewFile * normal G
 "当打开vim且没有文件时自动打开NERDTree
