@@ -345,7 +345,7 @@ func! CompileGcc()
   if &filetype == 'c'
     :AsyncRun gcc '%' -g -Wall -Wfatal-errors -std=c99 -o '%<'
   elseif &filetype == 'cpp'
-    :AsyncRun g++ '%' -g -Wall -Wfatal-errors -std=c++11 -o '%<'
+    :AsyncRun g++ '%' -I /home/raphael/develop/test/c-exercise/geek-c/myutil -g -Wall -Wfatal-errors -std=c++11 -o '%<'
   elseif &filetype == 'java' 
     :AsyncRun javac '%' 
   elseif &filetype == 'go'
