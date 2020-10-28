@@ -343,7 +343,7 @@ let g:asyncrun_open = 10
 map <F6> :call CompileGcc()<CR>
 func! CompileGcc()
   if &filetype == 'c'
-    :AsyncRun gcc '%' -g -Wall -Wfatal-errors -std=c99 -o '%<'
+    :AsyncRun gcc '%' -g -Wall -Wfatal-errors -std=c99 -D_POSIX_C_SOURCE -D_GNU_SOURCE -D_DEBUG_TIME -o '%<'
   elseif &filetype == 'cpp'
     :AsyncRun g++ '%' -I /home/raphael/develop/test/c-exercise/geek-c/myutil -g -Wall -Wfatal-errors -std=c++11 -o '%<'
   elseif &filetype == 'java' 
